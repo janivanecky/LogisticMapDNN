@@ -92,3 +92,11 @@ y = cos(W1 * cos(W2 * cos(W3 * cos(x))))
 ```
 
 `fbm` is just a sum of multiple cosines, and instead of `+ x`, we're performing more random linear transformation.
+
+## Something Artsy
+
+By changing output to 3 scalars, we can create the output images in RGB. This produces nice, artsy, trippy images.
+
+![Art1](imgs/art1.png "Art1")
+![Art2](imgs/art2.png "Art2")
+![Art3](imgs/art3.png "Art3")

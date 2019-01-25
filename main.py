@@ -9,6 +9,7 @@ iterations = 2
 R = 3.82843
 cosine = True
 freq = 1.0
+rgb = False
 
 def activation_fn(x):
     # Logistic map might diverge if values are not within (0,1) range (or R > 4),
@@ -31,13 +32,14 @@ class Model(torch.nn.Module):
         self.affine1 = torch.nn.Linear(2, 64)
         self.affine2 = torch.nn.Linear(64, 64)
         self.affine3 = torch.nn.Linear(64, 64)
-        self.affine4 = torch.nn.Linear(64, 1)
+        self.affine4 = torch.nn.Linear(64, 3)
 
     def forward(self, x):
         x = activation_fn(self.affine1(x))
         x = activation_fn(self.affine2(x))
         x = activation_fn(self.affine3(x))
         x = activation_fn(self.affine4(x))
+        x = torch.clamp(x, 0, 1)
         return x
 
 # Set up model and input data.
@@ -62,6 +64,7 @@ Z: If cosine is used before logistic map, this decreases cosine frequency by 0.0
 X: If cosine is used before logistic map, this increases cosine frequency by 0.01
 ===
 R: Reset DNN model (re-initialize weights)
+C: Toggle RGB output.
 T: Toggle cosine to be used before logistic map
 P: Print current variable values
 O: Save current image to 'img.png'
@@ -71,6 +74,8 @@ ESC: Quit
 # App loop.
 while(True):
     img = model(xy_space).cpu().detach().numpy()
+    if not rgb:
+        img = img[:, :, :1]
     cv2.imshow('image', img)
 
     # Controls handling.
@@ -89,6 +94,8 @@ while(True):
         freq += 0.01
     elif k == ord('r'):
         model = Model().cuda()
+    elif k == ord('c'):
+        rgb = not rgb
     elif k == ord('t'):
         cosine = not cosine
     elif k == ord('o'):
